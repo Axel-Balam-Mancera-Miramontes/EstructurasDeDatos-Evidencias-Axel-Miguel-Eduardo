@@ -5,21 +5,21 @@ import java.util.*;
 /**
  * Represents a node in a graph.
  */
-public class GraphNode {
+public class GraphNode1 {
     /**
      * Node's data
      */
     private String animal;
     private String nextAnimalFeature;
-    private GraphNode neighbourYes;
-    private GraphNode neighbourNo;
+    private GraphNode1 neighbourYes;
+    private GraphNode1 neighbourNo;
 
     /**
      * Constructs a new node with the specified data.
      *
      * @param animal The data to be stored in the node.
      */
-    public GraphNode(String animal) {
+    public GraphNode1(String animal) {
         setAnimal(animal);
         setNextAnimalFeature("Característica del siguinete animal no definida.");
     }
@@ -54,12 +54,12 @@ public class GraphNode {
      */
 
     // Add left nieghbour.
-    public void addNeighbourYes(GraphNode neighbourYes){
+    public void addNeighbourYes(GraphNode1 neighbourYes){
         this.neighbourYes = neighbourYes;
     }
 
     // Add right nieghbour.
-    public void addNeighbourNo(GraphNode neighbourNo){
+    public void addNeighbourNo(GraphNode1 neighbourNo){
         this.neighbourNo = neighbourNo;
     }
 
@@ -68,12 +68,12 @@ public class GraphNode {
      */
 
     //Get nieghbour yes.
-    public GraphNode getNeighbourYes(){
+    public GraphNode1 getNeighbourYes(){
         return neighbourYes;
     }
 
     //Get nieghbour no.
-    public GraphNode getNeighbourNo(){
+    public GraphNode1 getNeighbourNo(){
         return neighbourNo;
     }
 
@@ -82,9 +82,9 @@ public class GraphNode {
      *
      * @return A map of adjacent nodes and their edge weights.
      */
-    public ArrayList<GraphNode> getNeighbours() {
-        ArrayList<GraphNode> neighbours = new ArrayList<>();
-        GraphNode neighbour;
+    public ArrayList<GraphNode1> getNeighbours() {
+        ArrayList<GraphNode1> neighbours = new ArrayList<>();
+        GraphNode1 neighbour;
 
         neighbour= this.neighbourYes;
         if(neighbour != null){
@@ -105,7 +105,7 @@ public class GraphNode {
     public String toString() {
         String strOut = "Nodo: " + this.getAnimal();
 
-        for (GraphNode entry : this.getNeighbours()) {
+        for (GraphNode1 entry : this.getNeighbours()) {
             if(entry == null){
                 strOut += "\n\tVecino: ---";
             }
@@ -127,7 +127,7 @@ public class GraphNode {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GraphNode node = (GraphNode) o;
+        GraphNode1 node = (GraphNode1) o;
         return Objects.equals(animal, node.animal);
     }
 

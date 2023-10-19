@@ -1,7 +1,7 @@
 package evidencia2.process;
 
-import evidencia2.utils.Graph;
-import evidencia2.utils.GraphNode;
+import evidencia2.utils.Graph1;
+import evidencia2.utils.GraphNode1;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -55,7 +55,7 @@ public class Process {
         return animal;
     }
 
-    public static void guessAnimal(GraphNode currentNode, String hasFeature, String isAnimal){
+    public static void guessAnimal(GraphNode1 currentNode, String hasFeature, String isAnimal){
         while (currentNode.getNeighbours().size() > 0) {
 
             // Changing animal accordingly.
@@ -77,16 +77,16 @@ public class Process {
         }
     }
 
-    public static void improveSystem(ArrayList<String> animalFeatures, GraphNode currentNode, String hasFeature, Graph animals){
+    public static void improveSystem(ArrayList<String> animalFeatures, GraphNode1 currentNode, String hasFeature, Graph1 animals){
         String animal, feature;
         feature = Process.readAnimalFeature(animalFeatures);
         animal = Process.readAnimal();
 
         currentNode.setNextAnimalFeature(feature);
         if (hasFeature.equalsIgnoreCase("Yes")) {
-            animals.addEdgeYes(currentNode, new GraphNode(animal));
+            animals.addEdgeYes(currentNode, new GraphNode1(animal));
         } else if (hasFeature.equalsIgnoreCase("No")) {
-            animals.addEdgeNo(currentNode, new GraphNode(animal));
+            animals.addEdgeNo(currentNode, new GraphNode1(animal));
         }
     }
 }

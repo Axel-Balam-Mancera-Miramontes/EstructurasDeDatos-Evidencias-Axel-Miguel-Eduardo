@@ -6,8 +6,8 @@ package evidencia2.ui;
 
 import evidencia1.ui.Menu;
 import evidencia1.ui.MenuActionPrototype;
-import evidencia2.utils.Graph;
-import evidencia2.utils.GraphNode;
+import evidencia2.utils.Graph1;
+import evidencia2.utils.GraphNode1;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -20,7 +20,7 @@ public class CLI {
     /**
      * Data used by CLI.
      */
-    private static Graph animals = new Graph();
+    private static Graph1 animals = new Graph1();
     private static ArrayList<String> animalFeatures;
     private static Scanner input = new Scanner(System.in);
 
@@ -82,7 +82,7 @@ public class CLI {
      * Defines the action that simulates the simultaneous work of two different running servers.
      */
     private static MenuActionPrototype startGame = () -> {
-        GraphNode currentNode = animals.getRoot();
+        GraphNode1 currentNode = animals.getRoot();
 
         animalFeatures = new ArrayList<>();
         String hasFeature = "No", isAnimal = "No";
@@ -126,10 +126,10 @@ public class CLI {
 
             currentNode.setNextAnimalFeature(feature);
             if(hasFeature.equalsIgnoreCase("Sí")){
-                animals.addEdgeYes(currentNode, new GraphNode(animal));
+                animals.addEdgeYes(currentNode, new GraphNode1(animal));
             }
             else if(hasFeature.equalsIgnoreCase("No")){
-                animals.addEdgeNo(currentNode, new GraphNode(animal));
+                animals.addEdgeNo(currentNode, new GraphNode1(animal));
             }
         }
 
