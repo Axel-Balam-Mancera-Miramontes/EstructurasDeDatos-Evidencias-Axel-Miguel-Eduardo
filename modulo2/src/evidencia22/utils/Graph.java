@@ -1,4 +1,4 @@
-package evidencia22.utils;
+package evidencia2.utils;
 
 import java.util.*;
 
@@ -205,6 +205,53 @@ public class Graph<T> {
         return nodes;
     }
 
+//Apartir de aquí empieza Kruskal
 
+    public MinimumSpanningTree<T> kruskal() {
+        MinimumSpanningTree<T> mst = new MinimumSpanningTree<>();
+        List<Edge<T>> sortedEdges = new ArrayList<>();
 
+        for (GraphNode<T> node : nodes) {
+            mst.addNode(node);
+            for (Map.Entry<GraphNode<T>, Integer> entry : node.getEdges().entrySet()) {
+                GraphNode<T> neighbor = entry.getKey();
+                int weight = entry.getValue();
+                sortedEdges.add(new Edge<>(node, neighbor, weight));
+            }
+        }
+
+        // Ordena las aristas por peso de menor a mayor
+        sortedEdges.sort(Comparator.comparingInt(Edge::getWeight));
+
+        for (Edge<T> edge : sortedEdges) {
+            GraphNode<T> from = edge.getFrom();
+            GraphNode<T> to = edge.getTo();
+
+            if (!find(mst, from).equals(find(mst, to))) {
+                mst.addEdge(from, to, edge.getWeight());
+                union(mst, from, to);
+            }
+        }
+
+        return mst;
+    }
+
+    private GraphNode<T> find(MinimumSpanningTree<T> mst, GraphNode<T> node) {
+        for (GraphNode<T> n : mst.getNodes()) {
+            if (n.equals(node)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    private void union(MinimumSpanningTree<T> mst, GraphNode<T> a, GraphNode<T> b) {
+        GraphNode<T> rootA = find(mst, a);
+        GraphNode<T> rootB = find(mst, b);
+        if (rootA != null && rootB != null) {
+            mst.addNode(rootA);
+            mst.addNode(rootB);
+        }
+    }
 }
+
