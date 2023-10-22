@@ -1,7 +1,9 @@
-package evidencia22;
+package evidencia2;
 
-import evidencia22.utils.Graph;
-import evidencia22.utils.GraphNode;
+import evidencia2.utils.Edge;
+import evidencia2.utils.GraphNode;
+import evidencia2.utils.MinimumSpanningTree;
+import evidencia2.utils.Graph;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,5 +37,27 @@ public class Main {
         } else {
             System.out.println("No se encontró un camino entre A y D.");
         }
+
+        //Aqui  comienza Kruskal
+
+        // Crear un grafo
+        Graph<String> grafo = new Graph<>();
+
+        // ... (Agrega nodos y aristas a tu grafo)
+
+        // Encontrar el árbol mínimo de expansión (MST) usando Kruskal
+        MinimumSpanningTree<String> mst = graph.kruskal();
+
+        System.out.println("Resultados del algoritmo Kruskal:");
+        System.out.println("Nodos del MST:");
+        for (GraphNode<String> node : mst.getNodes()) {
+            System.out.println(node.getData());
+        }
+
+        System.out.println("Aristas del MST:");
+        for (Edge<String> edge : mst.getEdges()) {
+            System.out.println(edge.getFrom().getData() + " - " + edge.getTo().getData() + " (" + edge.getWeight() + ")");
+        }
     }
 }
+
