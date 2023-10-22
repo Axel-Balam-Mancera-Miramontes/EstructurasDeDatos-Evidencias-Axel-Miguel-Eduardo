@@ -1,4 +1,7 @@
-package evidencia2.utils;
+package evidencia22.utils;
+
+import evidencia22.utils.Edge;
+import evidencia22.utils.MinimumSpanningTree;
 
 import java.util.*;
 
@@ -133,6 +136,15 @@ public class Graph<T> {
         return false;
     }
 
+    //Shortest path algorithms
+
+    /**
+     * Perform Dijkstra's algorithm to determine the shortest path between two nodes in a weightred graph..
+     *
+     * @param source      The source node.
+     * @param destination The destination node.
+     * @return the distance of the shortest path if there is one, -1 otherwise.
+     */
     public int shortestPathDijkstra(GraphNode<T> source, GraphNode<T> destination) {
         if (source == null || destination == null) {
             return -1;
@@ -180,33 +192,13 @@ public class Graph<T> {
         return distance.get(destination);
     }
 
-
-    //Class' getters.
-
-    /**
-     * Retrieves a node by its data value.
-     *
-     * @param data The data value of the desired node.
-     * @return The node with the specified data value, or null if not found.
-     */
-    public GraphNode<T> getNode(T data) {
-        Optional<GraphNode<T>> foundNode = nodes.stream()
-                .filter(node -> data.equals(node.getData()))
-                .findFirst();
-        return foundNode.orElse(null);
-    }
+    // Minimum spam tree algorithms
 
     /**
-     * Gets the set of nodes in the graph.
+     * Perform Dijkstra's algorithm to determine the shortest path between two nodes in a weightred graph..
      *
-     * @return The set of nodes.
+     * @return MST suing Kruskal's algorithm.
      */
-    public Set<GraphNode<T>> getNodes() {
-        return nodes;
-    }
-
-//Apartir de aquí empieza Kruskal
-
     public MinimumSpanningTree<T> kruskal() {
         MinimumSpanningTree<T> mst = new MinimumSpanningTree<>();
         List<Edge<T>> sortedEdges = new ArrayList<>();
@@ -253,5 +245,65 @@ public class Graph<T> {
             mst.addNode(rootB);
         }
     }
+
+    public MinimumSpanningTree<T> prim() {
+        MinimumSpanningTree<T> mst = new MinimumSpanningTree<>();
+        Set<GraphNode<T>> visited = new HashSet<>();
+
+        if (nodes.isEmpty()) {
+            return mst;
+        }
+
+        // Comienza con un nodo arbitrario, por ejemplo, el primer nodo en el conjunto
+        GraphNode<T> startNode = nodes.iterator().next();
+        visited.add(startNode);
+
+        while (visited.size() < nodes.size()) {
+            Edge<T> minEdge = null;
+
+            for (GraphNode<T> visitedNode : visited) {
+                for (Map.Entry<GraphNode<T>, Integer> entry : visitedNode.getEdges().entrySet()) {
+                    GraphNode<T> neighbor = entry.getKey();
+                    int weight = entry.getValue();
+
+                    if (!visited.contains(neighbor) && (minEdge == null || weight < minEdge.getWeight())) {
+                        minEdge = new Edge<>(visitedNode, neighbor, weight);
+                    }
+                }
+            }
+
+            if (minEdge != null) {
+                visited.add(minEdge.getTo());
+                mst.addEdge(minEdge.getFrom(), minEdge.getTo(), minEdge.getWeight());
+            }
+        }
+
+        return mst;
+    }
+
+    //Class' getters.
+
+    /**
+     * Retrieves a node by its data value.
+     *
+     * @param data The data value of the desired node.
+     * @return The node with the specified data value, or null if not found.
+     */
+    public GraphNode<T> getNode(T data) {
+        Optional<GraphNode<T>> foundNode = nodes.stream()
+                .filter(node -> data.equals(node.getData()))
+                .findFirst();
+        return foundNode.orElse(null);
+    }
+
+    /**
+     * Gets the set of nodes in the graph.
+     *
+     * @return The set of nodes.
+     */
+    public Set<GraphNode<T>> getNodes() {
+        return nodes;
+    }
+
 }
 

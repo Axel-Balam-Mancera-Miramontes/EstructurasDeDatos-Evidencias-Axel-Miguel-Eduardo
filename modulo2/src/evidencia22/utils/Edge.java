@@ -1,4 +1,4 @@
-package evidencia2.utils;
+package evidencia22.utils;
 
 public class Edge<T> {
     private GraphNode<T> from;
