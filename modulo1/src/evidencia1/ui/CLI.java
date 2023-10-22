@@ -4,12 +4,13 @@
 
 package evidencia1.ui;
 
-import evidencia1.process.ServerSimulation;
-import evidencia1.utils.Cola;
+import evidencia1.utils.PriorityQueue;
 
-import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CLI contains all the data tha is going to be processed by the Passengers class.
@@ -19,9 +20,14 @@ public class CLI {
     /**
      * Data used by process package.
      */
-    private static Cola<Integer> serverA = new Cola<>();
-    private static Cola<Integer> serverB = new Cola<>();
+    private static PriorityQueue priorityQueue = new PriorityQueue();
     private static Scanner input = new Scanner(System.in);
+    private static int limit;
+    private static int minPushTime = 1;
+    private static int maxPushTime = 5;
+    private static int minPopTime = 1;
+    private static int maxPopTime = 5;
+    private static Random random = new Random();
 
     /**
      * Creating the user menu.
@@ -31,14 +37,20 @@ public class CLI {
     /**
      *  Menu options.
      */
-    private static String SIMULATE_SERVERS = "Simular trabajo simultáneo de dos servidores.";
+    private static String SET_PRIORITY_QUEUE_LIMIT = "Establecer el tope de la cola de prioridad.";
+    private static String SET_PUSH_TIME_RANGE = "Establecer el tiempo de espera antes de insertar un elemento a la cola de prioridad.";
+    private static String SET_POP_TIME_RANGE = "Establecer el tiempo de espera antes de eliminar un elemento a la cola de prioridad.";;
+    private static String START_SIMULATION = "Iniciar la simulación de la cola de prioridad.";
 
     /**
      * Other usefull texts.
      */
-    private static String RUN_PROCESS_SERVER_A = "Corriendo proceso del servidor A.\n";
-    private static String RUN_PROCESS_SERVER_B = "Corriendo proceso del servidor B.\n";
-    private static String NO_PROCESS_IN_SERVER = "¡Ya no hay más procesos a correr en el servidor!.\n";
+    private static String INPUT_MIN_PUSH_TIME = "Ingrese el tiempo mínimo en segundos que puede tomar un elemento antes de ser ingresado a la cola de prioridad:\n";
+    private static String INPUT_MAX_PUSH_TIME = "Ingrese el tiempo máximo en segundos que puede tomar un elemento antes de ser ingresado a la cola de prioridad:\n";
+    private static String INPUT_MIN_POP_TIME = "Ingrese el tiempo mínimo en segundos que puede tomar un elemento antes de ser eliminado a la cola de prioridad:\n";
+    private static String INPUT_MAX_POP_TIME = "Ingrese el tiempo máximo en segundos que puede tomar un elemento antes de ser eliminado a la cola de prioridad:\n";
+    private static String ELEMENT_PUSHED_MESSAGE = "Se ha insertado el elemento %d a la cola de prioridad.\n";
+    private static String ELEMENT_POPPED_MESSAGE = "Se ha eliminado el elemento %d a la cola de prioridad.\n";
 
     /**
      * Menu actions.
@@ -46,35 +58,64 @@ public class CLI {
     /**
      * Defines the action that simulates the simultaneous work of two different running servers.
      */
-    private static MenuActionPrototype simulateServers = () -> {
-        int i;
-        double probability;
-        Random random = new Random();
-        Optional<Integer> result;
+    private static MenuActionPrototype setPriorityQueueLimit = () -> {
+        System.out.printf("Ingrese el tope de la cola de prioridad:\n");
+        limit = input.nextInt();
+    };
 
-        for(i = 0; i < ServerSimulation.getNumberOfProcesses(); ++i){
-            ServerSimulation.loadServer(serverA, i);
-            ServerSimulation.loadServer(serverB, i);
+    private static MenuActionPrototype setPushTimeRange = () -> {
+        do {
+            System.out.printf(INPUT_MIN_PUSH_TIME);
+            minPushTime = input.nextInt();
+
+            System.out.printf(INPUT_MAX_PUSH_TIME);
+            maxPushTime = input.nextInt();
+
+            if (minPushTime >= maxPushTime) {
+                System.out.println("El valor mínimo debe ser menor que el valor máximo. Inténtalo de nuevo.");
+            }
+        } while (minPushTime >= maxPushTime);
+    };
+
+    private static MenuActionPrototype setPopTimeRange = () -> {
+        do {
+            System.out.printf(INPUT_MIN_POP_TIME);
+            minPopTime = input.nextInt();
+
+            System.out.printf(INPUT_MAX_POP_TIME);
+            maxPopTime = input.nextInt();
+
+            if (minPopTime >= maxPopTime) {
+                System.out.println("El valor mínimo debe ser menor que el valor máximo. Inténtalo de nuevo.");
+            }
+        } while (minPopTime >= maxPopTime);
+    };
+
+    private static MenuActionPrototype startSimulation = () -> {
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
+        // Ejecuta push
+        executorService.scheduleAtFixedRate(() -> {
+            int elmntToPush = random.nextInt((5 - 1) + 1) + 1;
+            priorityQueue.push(elmntToPush);
+            System.out.println(String.format(ELEMENT_PUSHED_MESSAGE, elmntToPush));
+        }, 0, random.nextInt((maxPushTime - minPushTime) + 1) + minPushTime, TimeUnit.SECONDS);
+
+        // Ejecuta pop
+        executorService.scheduleAtFixedRate(() -> {
+            int poppedElmnt = priorityQueue.pop().get();
+            System.out.println(String.format(ELEMENT_POPPED_MESSAGE, poppedElmnt));
+        }, 0, random.nextInt((maxPopTime - minPushTime) + 1) + minPushTime, TimeUnit.SECONDS);
+
+        // Ejecuta el programa durante 3 minutos (180 segundos)
+        try {
+            Thread.sleep(180000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-
-        while(!serverA.isEmpty() || !serverB.isEmpty()){
-            probability = random.nextDouble();
-            if(probability <= 0.3){
-                System.out.printf(RUN_PROCESS_SERVER_A);
-            }
-            else{
-                System.out.printf(RUN_PROCESS_SERVER_B);
-            }
-
-            result = ServerSimulation.processProcess(serverA, serverB, probability);
-            if(result != null){
-                System.out.println(result.get());
-            }
-            else{
-                System.out.printf(NO_PROCESS_IN_SERVER);
-            }
-        }
+        // Detiene el programa después de 3 minutos
+        executorService.shutdown();
     };
 
     /**
@@ -82,7 +123,10 @@ public class CLI {
      */
     static {
         menu
-                .addOption(SIMULATE_SERVERS, simulateServers)
+                .addOption(SET_PRIORITY_QUEUE_LIMIT, setPriorityQueueLimit)
+                .addOption(SET_PUSH_TIME_RANGE, setPushTimeRange)
+                .addOption(SET_POP_TIME_RANGE, setPopTimeRange)
+                .addOption(START_SIMULATION, startSimulation)
                 .addExitOption();
     }
 
