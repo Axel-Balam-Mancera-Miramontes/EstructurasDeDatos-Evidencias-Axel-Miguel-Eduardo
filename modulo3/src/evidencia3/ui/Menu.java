@@ -2,7 +2,9 @@
  * @author Axel Balam Mancera Miramontes
  */
 
-package evidencia1.ui;
+package evidencia3.ui;
+
+import evidencia3.ui.MenuActionPrototype;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;

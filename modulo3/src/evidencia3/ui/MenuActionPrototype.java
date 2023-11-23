@@ -2,7 +2,7 @@
  * @author Axel Balam Mancera Miramontes
  */
 
-package evidencia1.ui;
+package evidencia3.ui;
 
 /**
  * An instance of the functional interface MenuActionPrototype can be assigned the definition of a lambda function.
