@@ -1,7 +1,9 @@
 package evidencia22;
 
-import evidencia22.utils.Graph;
+import evidencia22.utils.Edge;
 import evidencia22.utils.GraphNode;
+import evidencia22.utils.MinimumSpanningTree;
+import evidencia22.utils.Graph;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,6 +36,34 @@ public class Main {
             System.out.println("La distancia mínima entre A y D es: " + shortestDistance);
         } else {
             System.out.println("No se encontró un camino entre A y D.");
+        }
+
+        // Encontrar el árbol mínimo de expansión (MST) usando Kruskal
+        MinimumSpanningTree<String> kruskalMST = graph.kruskal();
+
+        System.out.println("Resultados del algoritmo Kruskal:");
+        System.out.println("Nodos del MST:");
+        for (GraphNode<String> node : kruskalMST.getNodes()) {
+            System.out.println(node.getData());
+        }
+
+        System.out.println("Aristas del MST:");
+        for (Edge<String> edge : kruskalMST.getEdges()) {
+            System.out.println(edge.getFrom().getData() + " - " + edge.getTo().getData() + " (" + edge.getWeight() + ")");
+        }
+
+        // Encontrar el árbol mínimo de expansión (MST) usando Prim
+        MinimumSpanningTree<String> primMST = graph.prim();
+
+        System.out.println("Resultados del algoritmo Prim:");
+        System.out.println("Nodos del MST:");
+        for (GraphNode<String> node : primMST.getNodes()) {
+            System.out.println(node.getData());
+        }
+
+        System.out.println("Aristas del MST:");
+        for (Edge<String> edge : primMST.getEdges()) {
+            System.out.println(edge.getFrom().getData() + " - " + edge.getTo().getData() + " (" + edge.getWeight() + ")");
         }
     }
 }

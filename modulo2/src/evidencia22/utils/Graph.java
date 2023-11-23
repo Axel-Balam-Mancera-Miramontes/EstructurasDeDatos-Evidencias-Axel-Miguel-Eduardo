@@ -1,5 +1,8 @@
 package evidencia22.utils;
 
+import evidencia22.utils.Edge;
+import evidencia22.utils.MinimumSpanningTree;
+
 import java.util.*;
 
 /**
@@ -133,6 +136,15 @@ public class Graph<T> {
         return false;
     }
 
+    //Shortest path algorithms
+
+    /**
+     * Perform Dijkstra's algorithm to determine the shortest path between two nodes in a weightred graph..
+     *
+     * @param source      The source node.
+     * @param destination The destination node.
+     * @return the distance of the shortest path if there is one, -1 otherwise.
+     */
     public int shortestPathDijkstra(GraphNode<T> source, GraphNode<T> destination) {
         if (source == null || destination == null) {
             return -1;
@@ -180,6 +192,94 @@ public class Graph<T> {
         return distance.get(destination);
     }
 
+    // Minimum spam tree algorithms
+
+    /**
+     * Perform Dijkstra's algorithm to determine the shortest path between two nodes in a weightred graph..
+     *
+     * @return MST suing Kruskal's algorithm.
+     */
+    public MinimumSpanningTree<T> kruskal() {
+        MinimumSpanningTree<T> mst = new MinimumSpanningTree<>();
+        List<Edge<T>> sortedEdges = new ArrayList<>();
+
+        for (GraphNode<T> node : nodes) {
+            mst.addNode(node);
+            for (Map.Entry<GraphNode<T>, Integer> entry : node.getEdges().entrySet()) {
+                GraphNode<T> neighbor = entry.getKey();
+                int weight = entry.getValue();
+                sortedEdges.add(new Edge<>(node, neighbor, weight));
+            }
+        }
+
+        // Ordena las aristas por peso de menor a mayor
+        sortedEdges.sort(Comparator.comparingInt(Edge::getWeight));
+
+        for (Edge<T> edge : sortedEdges) {
+            GraphNode<T> from = edge.getFrom();
+            GraphNode<T> to = edge.getTo();
+
+            if (!find(mst, from).equals(find(mst, to))) {
+                mst.addEdge(from, to, edge.getWeight());
+                union(mst, from, to);
+            }
+        }
+
+        return mst;
+    }
+
+    private GraphNode<T> find(MinimumSpanningTree<T> mst, GraphNode<T> node) {
+        for (GraphNode<T> n : mst.getNodes()) {
+            if (n.equals(node)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    private void union(MinimumSpanningTree<T> mst, GraphNode<T> a, GraphNode<T> b) {
+        GraphNode<T> rootA = find(mst, a);
+        GraphNode<T> rootB = find(mst, b);
+        if (rootA != null && rootB != null) {
+            mst.addNode(rootA);
+            mst.addNode(rootB);
+        }
+    }
+
+    public MinimumSpanningTree<T> prim() {
+        MinimumSpanningTree<T> mst = new MinimumSpanningTree<>();
+        Set<GraphNode<T>> visited = new HashSet<>();
+
+        if (nodes.isEmpty()) {
+            return mst;
+        }
+
+        // Comienza con un nodo arbitrario, por ejemplo, el primer nodo en el conjunto
+        GraphNode<T> startNode = nodes.iterator().next();
+        visited.add(startNode);
+
+        while (visited.size() < nodes.size()) {
+            Edge<T> minEdge = null;
+
+            for (GraphNode<T> visitedNode : visited) {
+                for (Map.Entry<GraphNode<T>, Integer> entry : visitedNode.getEdges().entrySet()) {
+                    GraphNode<T> neighbor = entry.getKey();
+                    int weight = entry.getValue();
+
+                    if (!visited.contains(neighbor) && (minEdge == null || weight < minEdge.getWeight())) {
+                        minEdge = new Edge<>(visitedNode, neighbor, weight);
+                    }
+                }
+            }
+
+            if (minEdge != null) {
+                visited.add(minEdge.getTo());
+                mst.addEdge(minEdge.getFrom(), minEdge.getTo(), minEdge.getWeight());
+            }
+        }
+
+        return mst;
+    }
 
     //Class' getters.
 
@@ -205,6 +305,5 @@ public class Graph<T> {
         return nodes;
     }
 
-
-
 }
+
