@@ -1,4 +1,4 @@
-package evidencia2.utils;
+package evidencia3.utils;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,6 +10,15 @@ public class LinkedList<E> implements ILinkedList<E> {
     public LinkedList(){
         root = Optional.empty();
         size = 0;
+    }
+
+    public LinkedList(int nNodes){
+        root = Optional.empty();
+        size = 0;
+
+        for(int i = 0; i < nNodes; ++i){
+            this.add(null);
+        }
     }
 
     @Override
@@ -46,6 +55,22 @@ public class LinkedList<E> implements ILinkedList<E> {
         increaseSize();
     }
 
+    public void set(int index, E newValue) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        int currentIndex = 0;
+        Optional<Node<E>> currentNode = root;
+
+        while (currentIndex != index) {
+            currentNode = currentNode.get().next;
+            currentIndex++;
+        }
+
+        currentNode.get().data = newValue;
+    }
+
     @Override
     public void update(E oldValue, E newValue) {
         Optional<Node<E>> currentNode = root;
@@ -59,6 +84,38 @@ public class LinkedList<E> implements ILinkedList<E> {
         } else {
             throw new NoSuchElementException();
         }
+    }
+
+    @Override
+    public boolean contains(E t) {
+        Optional<Node<E>> currentNode = root;
+
+        while(!currentNode.get().data.equals(t) && currentNode.get().next.isPresent()){
+            currentNode = currentNode.get().next;
+        }
+
+        if(currentNode.get().data.equals(t)){
+            return true;
+        }
+        return false;
+
+    }
+
+    @Override
+    public Optional<E> get(int index) {
+        if(index < 0 || index >= size ){
+            throw new IndexOutOfBoundsException();
+        }
+
+        int currentIndex = 0;
+        Optional<Node<E>> currentNode = root;
+
+        while(currentIndex != index){
+            currentNode = currentNode.get().next;
+            ++currentIndex;
+        }
+
+        return Optional.of(currentNode.get().data);
     }
 
     @Override
@@ -90,23 +147,6 @@ public class LinkedList<E> implements ILinkedList<E> {
     }
 
     @Override
-    public Optional<E> get(int index) {
-        if(index < 0 || index >= size ){
-            throw new IndexOutOfBoundsException();
-        }
-
-        int currentIndex = 0;
-        Optional<Node<E>> currentNode = root;
-
-        while(currentIndex != index){
-            currentNode = currentNode.get().next;
-            ++currentIndex;
-        }
-
-        return Optional.of(currentNode.get().data);
-    }
-
-    @Override
     public int getSize() {
         return size;
     }
@@ -119,18 +159,4 @@ public class LinkedList<E> implements ILinkedList<E> {
         --size;
     }
 
-    @Override
-    public boolean contains(E t) {
-        Optional<Node<E>> currentNode = root;
-
-        while(!currentNode.get().data.equals(t) && currentNode.get().next.isPresent()){
-            currentNode = currentNode.get().next;
-        }
-
-        if(currentNode.get().data.equals(t)){
-            return true;
-        }
-        return false;
-
-    }
 }
